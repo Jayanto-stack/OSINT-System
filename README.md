@@ -1,4 +1,5 @@
 osint-risk-system/
+```
 │
 ├── backend/
 │   ├── main.py
@@ -16,3 +17,4 @@ osint-risk-system/
 ├── requirements.txt
 ├── README.md
 └── .gitignore
+```
