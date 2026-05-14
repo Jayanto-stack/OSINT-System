@@ -17,14 +17,35 @@ scanBtn.addEventListener("click", async () => {
         phone: phone
     };
 
-    console.log(userData);
+    try {
 
-    // Temporary fake result
-    document.getElementById("result").innerHTML = `
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Risk Score:</strong> Medium</p>
-        <p><strong>AI Summary:</strong> Public email exposure detected.</p>
-    `;
+        const response = await fetch("http://127.0.0.1:8000/scan-risk", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(userData)
+
+        });
+
+        const data = await response.json();
+
+        document.getElementById("result").innerHTML = `
+            <p><strong>Name:</strong> ${data.name}</p>
+            <p><strong>Email:</strong> ${data.email}</p>
+            <p><strong>Risk Score:</strong> ${data.risk_score}</p>
+            <p><strong>AI Summary:</strong> ${data.ai_summary}</p>
+        `;
+
+    } catch(error){
+
+        console.error(error);
+
+        alert("Backend connection failed");
+
+    }
 
 });
