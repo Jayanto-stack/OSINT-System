@@ -17,6 +17,8 @@ scanBtn.addEventListener("click", async () => {
         phone: phone
     };
 
+    console.log("Sending Data:", userData);
+
     try {
 
         const response = await fetch("http://127.0.0.1:8000/scan-risk", {
@@ -31,7 +33,11 @@ scanBtn.addEventListener("click", async () => {
 
         });
 
+        console.log("Respose Object:", response);
+
         const data = await response.json();
+
+        console.log("JSON Data:", data);
 
         document.getElementById("result").innerHTML = `
             <p><strong>Name:</strong> ${data.name}</p>
