@@ -28,16 +28,18 @@ def create_table():
 
 # Insert user function
 def insert_user(name, email, phone):
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "INSERT INTO users (name, email, phone) VALUES (?, ?, ?)",
-        (name, email, phone)
-    )
-
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO users (name, email, phone) VALUES (?, ?, ?)",
+            (name, email, phone)
+        )
+        conn.commit()
+        conn.close()
+        print("User inserted successfully")
+    except Exception as e:
+        print("DATABASE ERROR:", e)
 
 # Create table automatically
 create_table()

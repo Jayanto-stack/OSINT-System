@@ -36,15 +36,15 @@ scanBtn.addEventListener("click", async () => {
         console.log("Respose Object:", response);
 
         const data = await response.json();
-
         console.log("JSON Data:", data);
+        console.log("RESULT DIV:", document.getElementById("result"));
 
-        document.getElementById("result").innerHTML = `
-            <p><strong>Name:</strong> ${data.name}</p>
-            <p><strong>Email:</strong> ${data.email}</p>
-            <p><strong>Risk Score:</strong> ${data.risk_score}</p>
-            <p><strong>AI Summary:</strong> ${data.ai_summary}</p>
-        `;
+        document.getElementById("result").innerHTML =
+            "<p><strong>Name:</strong> " + data.name + "</p>" +
+            "<p><strong>Email:</strong> " + data.email + "</p>" +
+            "<p><strong>Risk Score:</strong> " + data.risk_score + "</p>" +
+            "<p><strong>AI Summary:</strong> " + data.ai_summary + "</p>"
+            ;
 
     } catch(error){
 
