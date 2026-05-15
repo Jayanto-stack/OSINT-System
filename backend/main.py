@@ -27,7 +27,7 @@ class UserData(BaseModel):
 async def scan_risk(user: UserData):
 
     # Save into database
-    insert_user(user.name, user.email, user.phone)
+    # insert_user(user.name, user.email, user.phone)
 
     # Temporary fake response
     return {

@@ -1,33 +1,35 @@
 import sqlite3
 import os
 
+# Database path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "users.db")
 
-# Connect to SQLite database
-conn = sqlite3.connect(db_path, check_same_thread=False)
-# sqlite3.connect("database/users.db") Creates database file automatically if not exists.
 
-# Create cursor
-cursor = conn.cursor()
-# cursor() is used for execute SQL queries, interact with database
+# Create table function
+def create_table():
 
-# Create users table only once
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phone TEXT
-)
-""")
+    conn = sqlite3.connect(db_path)
 
-# Save changes
-conn.commit()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 
 
-# Function to insert user data (custom function to save user data)
+# Insert user function
 def insert_user(name, email, phone):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
 
     cursor.execute(
         "INSERT INTO users (name, email, phone) VALUES (?, ?, ?)",
@@ -35,3 +37,7 @@ def insert_user(name, email, phone):
     )
 
     conn.commit()
+    conn.close()
+
+# Create table automatically
+create_table()
