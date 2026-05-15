@@ -48,7 +48,7 @@ scanBtn.addEventListener("click", async () => {
 
     } catch(error){
 
-        console.error(error);
+        console.error("FULL ERROR:", error);
 
         alert("Backend connection failed");
 
