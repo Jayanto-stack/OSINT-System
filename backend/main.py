@@ -25,9 +25,15 @@ class UserData(BaseModel):
 # API endpoint
 @app.post("/scan-risk")
 async def scan_risk(user: UserData):
+    print("API HIT")
 
     # Save into database
-    # insert_user(user.name, user.email, user.phone)
+    try:
+        insert_user(user.name, user.email, user.phone)
+        print("INSERT SUCCESS")
+    
+    except Exception as e:
+        print("MAIN ERROR:", e)
 
     # Temporary fake response
     return {
