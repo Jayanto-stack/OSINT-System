@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from database.db import insert_user
 
 # Create FastAPI app
 app = FastAPI()
@@ -25,7 +26,8 @@ class UserData(BaseModel):
 @app.post("/scan-risk")
 async def scan_risk(user: UserData):
 
-    print(user)
+    # Save into database
+    insert_user(user.name, user.email, user.phone)
 
     # Temporary fake response
     return {
