@@ -13,7 +13,7 @@ except ImportError:
 # API KEYS — fill these in
 # HIBP key: sign up free at https://haveibeenpwned.com/API/Key ($3.50/month)
 # Without it, breach check is skipped (everything else still works)
-HIBP_API_KEY = ""   # paste your key here e.g. "abc123xyz..."
+# HIBP_API_KEY = ""   # paste your key here e.g. "abc123xyz..."
 # ─────────────────────────────────────────────────────────────────────
 
 
@@ -63,50 +63,24 @@ def check_email_registrations(email: str) -> list:
 
 
 def check_email_breach(email: str) -> dict:
-    """Check HaveIBeenPwned for known data breaches."""
-    if not HIBP_API_KEY:
-        print("[OSINT] HIBP API key not set — skipping breach check")
-        print("[OSINT] Get a free key at: https://haveibeenpwned.com/API/Key")
-        return {
-            "breached": "unknown",
-            "count": 0,
-            "breaches": [],
-            "note": "Add your HIBP_API_KEY in scanner.py to enable breach checking"
-        }
-
+    """Check LeakCheck.io for breaches — free tier available."""
+    LEAKCHECK_KEY = "ee514546e62bff550cea0f73de2eea53f4e754ec"
     try:
-        headers = {
-            "User-Agent":   "OSINT-RiskTool",
-            "hibp-api-key": HIBP_API_KEY
-        }
         r = httpx.get(
-            f"https://haveibeenpwned.com/api/v3/breachedaccount/{email}",
-            headers=headers,
+            f"https://leakcheck.io/api/public?check={email}&key={LEAKCHECK_KEY}",
             timeout=15
         )
-        if r.status_code == 200:
-            breaches = r.json()
-            names = [b["Name"] for b in breaches[:5]]
-            print(f"[OSINT] HIBP: {len(breaches)} breaches found — {names}")
-            return {"breached": True, "count": len(breaches), "breaches": names}
-        elif r.status_code == 404:
-            print("[OSINT] HIBP: no breaches found")
-            return {"breached": False, "count": 0, "breaches": []}
-        elif r.status_code == 401:
-            print("[OSINT] HIBP: invalid API key")
-            return {"breached": "unknown", "count": 0, "breaches": [],
-                    "note": "Invalid HIBP API key — check scanner.py"}
-        elif r.status_code == 429:
-            print("[OSINT] HIBP: rate limited")
-            return {"breached": "unknown", "count": 0, "breaches": [],
-                    "note": "HIBP rate limited — try again in 1 minute"}
+        data = r.json()
+        if data.get("success") and data.get("found", 0) > 0:
+            sources = [s.get("name", "Unknown") for s in data.get("sources", [])[:5]]
+            print(f"[OSINT] LeakCheck: {data['found']} breaches found")
+            return {"breached": True, "count": data["found"], "breaches": sources}
         else:
-            print(f"[OSINT] HIBP: unexpected status {r.status_code}")
-            return {"breached": "unknown", "count": 0, "breaches": []}
+            print("[OSINT] LeakCheck: no breaches found")
+            return {"breached": False, "count": 0, "breaches": []}
     except Exception as e:
-        print(f"[OSINT] HIBP error: {e}")
+        print(f"[OSINT] LeakCheck error: {e}")
         return {"breached": "unknown", "count": 0, "breaches": []}
-
 
 def run_osint_scan(name: str, email: str, phone: str = None) -> dict:
     print(f"[OSINT] ── Starting scan: {name} / {email} ──")
