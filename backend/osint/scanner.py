@@ -34,8 +34,11 @@ def check_email_registrations(email: str) -> list:
         # Parse holehe output — lines with [+] mean account found
         found = [l.strip() for l in lines if "[+]" in l]
         return found
+    except FileNotFoundError:
+        print("[OSINT] holehe not found - skipping (run: pip install holehe)")
+        return []
     except Exception as e:
-        print(f"Holehe error: {e}")
+        print(f"[OSINT]Holehe error: {e}")
         return []
 
 
@@ -50,17 +53,23 @@ def check_email_breach(email: str) -> dict:
         )
         if r.status_code == 200:
             breaches = r.json()
+            print(f"[OSINT] HIBP found {len(breaches)} breaches")
             return {
                 "breached": True,
                 "count": len(breaches),
                 "breaches": [b["Name"] for b in breaches[:5]]  # top 5
             }
         elif r.status_code == 404:
+            print("[OSINT] HIBP: no breaches found")
             return {"breached": False, "count": 0, "breaches": []}
+        elif r.status_code == 401:
+            print("[OSINT] HIBP: API key requires - skipping breach check")
+            return {"breached": "unknown", "count": 0, "breaches": [], "note": "API key required"}
         else:
+            print(f"[OSINT] HIBP returned status {r.status_code}")
             return {"breached": "unknown", "count": 0, "breaches": []}
     except Exception as e:
-        print(f"HIBP error: {e}")
+        print(f"[OSINT] HIBP error: {e}")
         return {"breached": "unknown", "count": 0, "breaches": []}
 
 
@@ -71,6 +80,9 @@ def run_osint_scan(name: str, email: str, phone: str = None) -> dict:
     google_results = google_dork_search(name, email)
     email_sites    = check_email_registrations(email)
     breach_data    = check_email_breach(email)
+
+    print(f"[OSINT] ---- Scan done: {len(google_results)} URLs, "
+          f"{len(email_sites)} sites, breached={breach_data.get('breached')} -----")
 
     return {
         "name": name,
