@@ -68,6 +68,12 @@ Return ONLY this JSON, nothing else, no explanation:
 
         result = extract_json(raw)
 
+        # Ensure digital_footprint always has a value even if Ollama skips it
+        if not result.get("digital_footprint"):
+            result["digital_footprint"] = build_manual_report(
+                osint_data, clean_sites, breached, breach_list
+            )["digital_footprint"]
+
         if result:
             print("[AI] JSON extracted successfully")
             return result
