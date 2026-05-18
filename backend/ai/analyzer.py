@@ -82,6 +82,9 @@ Return ONLY this JSON, nothing else, No explanation. No markdown. Keep all value
                     osint_data, clean_sites, breached, breach_list
                     )["breach_summary"]
                 return result
+        else:
+            print("[AI] Could not extract JSON - building mnaual report")
+            return build_manual_report(osint_data, clean_sites, breached, breach_list)
 
     except httpx.ConnectError:
         print("[AI] Cannot connect to Ollama")
