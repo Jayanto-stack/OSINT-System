@@ -3,44 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src http://127.0.0.1:8000;">
-    <title>AI-Powered OSINT Risk Intelligence System</title>
-
+    <title>OSINT // RISK INTELLIGENCE</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <div class="container">
+<!-- Layer 0: Matrix rain -->
+<canvas id="matrix-canvas"></canvas>
 
-        <h1>AI-Powered OSINT Risk Intelligence System</h1>
+<!-- Layer 1: Scanlines + vignette -->
+<div class="scanlines"></div>
+<div class="vignette"></div>
 
-        <div class="form-box">
+<!-- Layer 2: All content -->
+<div class="page">
 
-            <input type="text" id="name" placeholder="Enter Your Name">
-
-            <input type="email" id="email" placeholder="Enter Your Email">
-
-            <input type="text" id="phone" placeholder="Enter Phone Number (Optional)">
-
-            <button id="scanBtn">Scan OSINT Risk</button>
-
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-bar">
+            <span><span class="blink-dot"></span>SYS::ONLINE</span>
+            <span id="clock">--:--:-- UTC</span>
         </div>
+        <div class="main-title">[ OSINT RISK INTELLIGENCE ]</div>
+        <div class="main-sub">AI-POWERED THREAT ASSESSMENT SYSTEM // v2.4.1</div>
+    </header>
 
-        <div class="result-box">
+    <div class="divider"></div>
 
-            <h2>OSINT Risk Report</h2>
+    <!-- Input panel -->
+    <div class="panel">
+        <span class="panel-label">// INPUT PARAMETERS</span>
 
-            <div id="result">
-
-                <p>No scan performed yet.</p>
-
+        <div class="field">
+            <label class="field-label">TARGET_NAME</label>
+            <div class="input-row">
+                <span class="prompt-char">&gt;</span>
+                <input type="text" id="name" placeholder="ENTER FULL NAME" autocomplete="off">
             </div>
-
         </div>
 
+        <div class="field">
+            <label class="field-label">TARGET_EMAIL</label>
+            <div class="input-row">
+                <span class="prompt-char">&gt;</span>
+                <input type="email" id="email" placeholder="ENTER EMAIL ADDRESS" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="field-label">TARGET_PHONE <span class="opt">[OPTIONAL]</span></label>
+            <div class="input-row">
+                <span class="prompt-char">&gt;</span>
+                <input type="text" id="phone" placeholder="ENTER PHONE NUMBER" autocomplete="off">
+            </div>
+        </div>
+
+        <button id="scanBtn">[ INITIATE OSINT SCAN ]</button>
+
+        <div class="status-strip">
+            <div class="status-item">
+                <span class="s-key">MODULE</span>
+                <span class="s-val lit" id="st-module">STANDBY</span>
+            </div>
+            <div class="status-item">
+                <span class="s-key">BREACH_DB</span>
+                <span class="s-val">LEAKCHECK.IO</span>
+            </div>
+            <div class="status-item">
+                <span class="s-key">AI_ENGINE</span>
+                <span class="s-val">LLAMA3 // LOCAL</span>
+            </div>
+            <div class="status-item">
+                <span class="s-key">ANONYMITY</span>
+                <span class="s-val lit">SECURE</span>
+            </div>
+        </div>
     </div>
 
-    <script src="js/app.js"></script>
+    <!-- Result panel (hidden until scan) -->
+    <div class="panel" id="result-panel">
+        <span class="panel-label">// THREAT ASSESSMENT REPORT &nbsp;&nbsp; <span id="scan-id"></span></span>
+        <div id="result"></div>
+    </div>
 
+</div>
+
+<!-- Fixed footer -->
+<footer class="site-footer">
+    <span>OSINT-SYS // ALL DATA PROCESSED LOCALLY // AUTHORIZED USE ONLY</span>
+    <span id="pkt">PKT: 0000</span>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+    // Live clock
+    function tick() {
+        const now = new Date();
+        document.getElementById("clock").textContent =
+            now.toISOString().replace("T"," ").slice(0,19) + " UTC";
+    }
+    tick(); setInterval(tick, 1000);
+
+    // Cosmetic packet counter
+    let pkt = Math.floor(Math.random() * 3000);
+    setInterval(() => {
+        pkt += Math.floor(Math.random() * 9);
+        document.getElementById("pkt").textContent = "PKT: " + String(pkt).padStart(5,"0");
+    }, 180);
+
+    // Scan ID
+    window.newScanId = () =>
+        "SCAN#" + Math.random().toString(36).slice(2,10).toUpperCase();
+
+    // Matrix rain
+    const cv  = document.getElementById("matrix-canvas");
+    const ctx = cv.getContext("2d");
+    function resize() { cv.width = innerWidth; cv.height = innerHeight; }
+    resize(); window.addEventListener("resize", resize);
+    const chars = "アイウエオカキクサシスセソタチツテトナニヌ01010110ABCDEF<>[]{}#@!%$";
+    const fs    = 13;
+    let drops   = [];
+    function initDrops() { drops = Array(Math.floor(cv.width/fs)).fill(1); }
+    initDrops(); window.addEventListener("resize", initDrops);
+    setInterval(() => {
+        ctx.fillStyle = "rgba(0,0,0,0.05)";
+        ctx.fillRect(0, 0, cv.width, cv.height);
+        ctx.font = fs + "px 'Courier New'";
+        for (let i = 0; i < drops.length; i++) {
+            ctx.fillStyle = Math.random() > 0.96 ? "#00ff41" : "#0a2e0a";
+            ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*fs, drops[i]*fs);
+            if (drops[i]*fs > cv.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }, 45);
+</script>
 </body>
 </html>
