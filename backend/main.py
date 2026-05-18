@@ -59,15 +59,22 @@ async def scan_risk(user: UserData):
     
     # 2. Run OSINT scan
     print("[OSINT] Starting scan...")
-    osint_data = run_osint_scan(user.name, user.email, user.phone)
-    print("[OSINT] Scan complete")
+    try:
+        osint_data = run_osint_scan(user.name, user.email, user.phone)
+        ai_report = analyze_with_ai(osint_data)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()           # Print full error to terminal
+        ai_report = {
+            "risk_score": "Unknown",
+            "ai_summary":  f"Analysis error: {str(e)}",
+            "digital_footprint": "Error during analysis",
+            "breach_summary": "Error during analysis",
+            "risk_reasons": [str(e)],
+            "recommendations": ["Check uvicorn terminal for details"]
+        }
+        osint_data = {"google_mentions": [], "registered_sites": [], "breach_data": {}}
 
-    # 3. AI analysis
-    print("[AI] Starting analysis...")
-    ai_report = analyze_with_ai(osint_data)
-    print("[AI] Analysis complete")
-
-    # 4. Return combined report to frontend
     return {
         "message": "Scan complete",
         "name": user.name,
