@@ -35,7 +35,7 @@ Sample URLs: {", ".join(urls[:3]) if urls else "None"}
 Email registered on: {", ".join(clean_sites) if clean_sites else "None found"}
 Data breaches: breached={breached}, count={breach.get("count", 0)}, services={", ".join(breach_list) if breach_list else "None"}
 
-Return ONLY this JSON, nothing else, no explanation:
+Return ONLY this JSON, nothing else, No explanation. No markdown. Keep all values under 30 words each:
 {{
   "risk_score": "Medium",
   "risk_reasons": ["reason one", "reason two"],
@@ -56,7 +56,7 @@ Return ONLY this JSON, nothing else, no explanation:
                 "stream": False,
                 "options": {
                     "temperature": 0.1,
-                    "num_predict": 600
+                    "num_predict": 1200
                 }
             },
             timeout=180
@@ -69,17 +69,19 @@ Return ONLY this JSON, nothing else, no explanation:
         result = extract_json(raw)
 
         # Ensure digital_footprint always has a value even if Ollama skips it
-        if not result.get("digital_footprint"):
-            result["digital_footprint"] = build_manual_report(
-                osint_data, clean_sites, breached, breach_list
-            )["digital_footprint"]
-
         if result:
             print("[AI] JSON extracted successfully")
-            return result
-        else:
-            print("[AI] Could not extract JSON — building manual report from OSINT data")
-            return build_manual_report(osint_data, clean_sites, breached, breach_list)
+            # Guarantee digital_footprint is never empty
+            if not result.get("digital_footprint"):
+                result["digital_footprint"] = build_manual_report(
+                    osint_data, clean_sites, breached, breach_list
+                    )["digital_footprint"]
+            
+            if not result.get("breach_summary"):
+                result["breach_summary"] = build_manual_report(
+                    osint_data, clean_sites, breached, breach_list
+                    )["breach_summary"]
+                return result
 
     except httpx.ConnectError:
         print("[AI] Cannot connect to Ollama")
