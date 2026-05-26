@@ -44,6 +44,10 @@ def google_dork_search(name: str, email: str) -> list:
             print(f"[OSINT] Google error: {e}")
     return list(set(results))
 
+HOLEHE_FALSE_POSITIVES = {
+    "firefox.com", "office365.com", "amazon.com",
+    "spotify.com", "wordpress.com", "adobe.com"
+}
 
 def check_email_registrations(email: str) -> list:
     try:
@@ -52,9 +56,21 @@ def check_email_registrations(email: str) -> list:
             capture_output=True, text=True, timeout=90
         )
         lines = result.stdout.strip().split("\n")
-        filtered = [l.strip() for l in lines
-                    if ("[+]" in l or "[-]" in l or "[x]" in l) and l.strip()]
-        print(f"[OSINT] Holehe: {len([l for l in filtered if '[+]' in l])} registrations")
+        filtered = []
+        for l in lines:
+            if not l.strip():
+                continue
+            if "[+]" in l or "[-]" in l or "[x]" in l:
+                # Extract domain from line
+                match = re.search(r'\[.\]\s*(\S+)', l.strip())
+                domain = match.group(1).lower() if match else ""
+                # Skip known false positives
+                if "[+]" in l and domain in HOLEHE_FALSE_POSITIVES:
+                    print(f"[OSINT] Holehe: skipping false positive - {domain}")
+                    continue
+                filtered.append(l.strip())
+        found = [l for l in filtered if "[+]" in l]
+        print(f"[OSINT] Holehe: {len(found)} real registrations found")
         return filtered
     except FileNotFoundError:
         print("[OSINT] holehe not found")
