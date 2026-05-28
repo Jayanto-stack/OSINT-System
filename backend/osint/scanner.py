@@ -2,6 +2,8 @@ import httpx
 import subprocess
 import re
 import socket
+from dotenv import load_dotenv
+import os
 
 try:
     import shodan as shodan_lib
@@ -19,11 +21,12 @@ except ImportError:
 # ─────────────────────────────────────────────────────────────────────
 # API KEYS
 # ─────────────────────────────────────────────────────────────────────
-SHODAN_API_KEY    = "hPA4PbgBXkHPbiqWHuiyzQPYecw6dV1j"   # account.shodan.io — you have this already
-HUNTER_API_KEY    = "992f74a2f836b2487da6991a57a745b88513fccf"   # hunter.io — free 25 searches/month
-NUMVERIFY_API_KEY = ""   # numverify.com — free 100/month
-LEAKCHECK_API_KEY = "ee514546e62bff550cea0f73de2eea53f4e754ec"   # paste your existing LeakCheck key here
-# ─────────────────────────────────────────────────────────────────────
+load_dotenv()
+
+SHODAN_API_KEY          = os.getenv("SHODAN_API_KEY", "")
+HUNTER_API_KEY          = os.getenv("HUNTER_API_KEY", "")
+NUMVERIFY_API_KEY       = os.getenv("NUMVERIFY_API_KEY", "")
+LEAKCHECK_API_KEY       = os.getenv("LEAKCHECK_API_KEY", "")
 
 
 def google_dork_search(name: str, email: str) -> list:
