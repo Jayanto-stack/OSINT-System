@@ -40,11 +40,11 @@ Open `http://127.0.0.1:8000
 
 ## API keys needed
 | Service | Free Tier | Link |
-|---|---|---|---|
-| LeakCheck | Yes  | leakcheck.io |
-| Shodan  | Yes (limited) | shodan.io |
-| Hunter.io  | 25/month | hunter.io |
-| NumVerrify | 100/month  | numverify.com |
+|---|---|---|
+| LeakCheck | Yes | leakcheck.io |
+| Shodan | Yes (limited) | shodan.io |
+| Hunter.io | 25/month | hunter.io |
+| NumVerify | 100/month | numverify.com |
 
 ## Disclainer
 For authorized and educational use only.
