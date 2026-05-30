@@ -34,7 +34,7 @@ cp .env.example backend/.env
 ## Usage
 ```bash
 cd backend
-unicorn main:app --reload --port 8000
+uvicorn main:app --reload --port 8000
 ```
 Open `http://127.0.0.1:8000
 
